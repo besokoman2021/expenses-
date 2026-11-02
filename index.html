@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>إدارتك المالية</title>
+  
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#5c35b1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="إدارتك المالية">
+  
+  <link rel="icon" type="image/png" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header class="app-header">
+      <h1 class="app-title">إدارتك المالية</h1>
+      
+      <!-- 3 Navigation Tabs matching screenshots -->
+      <nav class="nav-tabs" aria-label="أقسام التطبيق">
+        <!-- Tab 1: Transactions -->
+        <button class="tab-btn active" data-tab="transactions" id="tabBtnTransactions">
+          <svg viewBox="0 0 24 24">
+            <line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="4" cy="6" r="1.5" fill="currentColor"/>
+            <circle cx="4" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="4" cy="18" r="1.5" fill="currentColor"/>
+          </svg>
+          <span>المعاملات</span>
+        </button>
+
+        <!-- Tab 2: Reports -->
+        <button class="tab-btn" data-tab="reports" id="tabBtnReports">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor"/>
+            <path d="M12 4v8l6.5 3.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 12h8" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>التقارير</span>
+        </button>
+
+        <!-- Tab 3: Analysis -->
+        <button class="tab-btn" data-tab="analysis" id="tabBtnAnalysis">
+          <svg viewBox="0 0 24 24">
+            <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" fill="currentColor"/>
+            <polygon points="19,1 19.8,3.2 22,4 19.8,4.8 19,7 18.2,4.8 16,4 18.2,3.2" fill="currentColor"/>
+          </svg>
+          <span>التحليل</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Main Views -->
+    <main class="app-content">
+      
+      <!-- ================= PANE 1: TRANSACTIONS ================= -->
+      <section class="tab-pane active" id="tab-transactions">
+        <!-- Summary Card -->
+        <div class="summary-card">
+          <div class="summary-row-split">
+            <div class="summary-col">
+              <span class="summary-label">الإيرادات</span>
+              <span class="summary-amount-green" id="summaryIncome">0.00 ج.م</span>
+            </div>
+            <div class="summary-col">
+              <span class="summary-label">المصروفات</span>
+              <span class="summary-amount-red" id="summaryExpense">0.00 ج.م</span>
+            </div>
+          </div>
+          <div class="summary-col-balance">
+            <span class="summary-label">الرصيد</span>
+            <div class="summary-amount-balance" id="summaryBalance">0.00 ج.م</div>
+          </div>
+          <!-- Dynamic Smart Insight Banner -->
+          <div class="insight-box" id="summaryInsight" style="display: none;"></div>
+        </div>
+
+        <!-- Transactions List -->
+        <div class="transactions-list" id="transactionsList">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Empty State (STRICT: Zero dummy data) -->
+        <div class="empty-state" id="transactionsEmpty">
+          <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+            <line x1="6" y1="8" x2="10" y2="8"></line>
+            <line x1="6" y1="12" x2="14" y2="12"></line>
+            <line x1="6" y1="16" x2="18" y2="16"></line>
+          </svg>
+          <h3>لا توجد معاملات مسجلة</h3>
+          <p>ابدأ بإضافة أول إيراد أو مصروف عبر الضغط على الزر الأزرق (+)</p>
+        </div>
+      </section>
+
+      <!-- ================= PANE 2: REPORTS ================= -->
+      <section class="tab-pane" id="tab-reports">
+        <!-- Header row with title & share -->
+        <div class="screen-header">
+          <h2 class="screen-title">التقارير المالية</h2>
+          <button class="icon-action-btn" id="shareReportBtn" title="مشاركة أو نسخ التقرير">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Month Navigation Card -->
+        <div class="month-selector-card">
+          <div class="month-nav-header">
+            <button class="month-nav-btn" id="prevMonthBtn" title="الشهر السابق">&gt;</button>
+            <span id="selectedMonthLabel">نوفمبر 2026</span>
+            <button class="month-nav-btn" id="nextMonthBtn" title="الشهر القادم">&lt;</button>
+          </div>
+
+          <div class="report-breakdown-row">
+            <span class="report-breakdown-label">الإيرادات</span>
+            <span class="amount-display amount-green" id="reportIncome">0.00 ج.م</span>
+          </div>
+
+          <div class="report-breakdown-row">
+            <span class="report-breakdown-label">المصروفات</span>
+            <span class="amount-display amount-red" id="reportExpense">0.00 ج.م</span>
+          </div>
+
+          <div class="report-breakdown-row">
+            <span class="report-breakdown-label">الرصيد</span>
+            <span class="amount-display amount-blue" id="reportBalance">0.00 ج.م</span>
+          </div>
+        </div>
+
+        <!-- Donut Distribution Card -->
+        <div class="chart-card">
+          <h3 class="chart-card-title">توزيع المصروفات</h3>
+          
+          <div class="donut-wrapper">
+            <canvas id="reportDonutCanvas" class="donut-canvas"></canvas>
+            <div class="donut-center-info">
+              <div class="donut-center-cat" id="donutCenterCat">لا توجد مصروفات</div>
+              <div class="donut-center-val" id="donutCenterVal">0.00 ج.م</div>
+            </div>
+          </div>
+
+          <div class="chart-legend" id="donutLegend"></div>
+        </div>
+      </section>
+
+      <!-- ================= PANE 3: ANALYSIS ================= -->
+      <section class="tab-pane" id="tab-analysis">
+        <div class="screen-header">
+          <h2 class="screen-title">التحليل المالي والنسخ الاحتياطي</h2>
+        </div>
+
+        <div class="analysis-grid">
+          <!-- Quick Stats Card -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>مؤشرات الأداء المالي</span>
+            </div>
+            <div class="report-breakdown-row">
+              <span>نسبة التوفير / الادخار:</span>
+              <span class="amount-display amount-green" id="analysisSavingsRate">0.0%</span>
+            </div>
+            <div class="report-breakdown-row">
+              <span>إجمالي المعاملات المسجلة:</span>
+              <span class="amount-display" id="analysisTxCount" style="color: #5c35b1;">0</span>
+            </div>
+            <div class="report-breakdown-row">
+              <span>إجمالي المصروفات:</span>
+              <span class="amount-display amount-red" id="analysisTotalExpense">0.00 ج.م</span>
+            </div>
+          </div>
+
+          <!-- Category Progress Breakdown -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>توزيع المصروفات حسب الفئات</span>
+            </div>
+            <div id="analysisCatList"></div>
+          </div>
+
+          <!-- Local Device Backup Card -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>حفظ البيانات والنسخ الاحتياطي على جهازك</span>
+            </div>
+            <p style="font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 12px;">
+              بياناتك محفوظة محلياً بالكامل على متصفح جهازك ولا ترسل لأي خادم. يمكنك في أي وقت تنزيل نسخة احتياطية واستعادتها.
+            </p>
+
+            <div class="backup-actions-grid">
+              <button class="btn-secondary" id="btnExportBackup">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>تصدير نسخة (JSON)</span>
+              </button>
+
+              <button class="btn-secondary" id="btnImportBackup">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>استعادة نسخة</span>
+              </button>
+              <input type="file" id="importBackupInput" accept=".json" style="display: none;">
+
+              <button class="btn-secondary" id="btnExportCSV">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span>تصدير Excel (CSV)</span>
+              </button>
+
+              <button class="btn-secondary" id="btnOpenCategoryManager">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+                <span>إدارة وتعديل الفئات</span>
+              </button>
+
+              <button class="btn-secondary" id="pwaInstallBtn" style="display: inline-flex;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                  <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                </svg>
+                <span>تثبيت التطبيق</span>
+              </button>
+
+              <button class="btn-danger-soft" id="btnClearData">
+                مسح كافة البيانات من المتصفح
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Centered watermark matching screenshots -->
+      <footer class="app-footer">
+        تم تطويره بواسطة أبوحمزة
+      </footer>
+    </main>
+
+    <!-- Floating Action Button (FAB) at bottom left -->
+    <button class="fab-btn" id="openAddTxBtn" aria-label="إضافة معاملة جديدة">
+      <svg viewBox="0 0 24 24" fill="none">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+
+    <!-- ================= MODAL: ADD / EDIT TRANSACTION ================= -->
+    <div class="modal-overlay" id="txModalOverlay">
+      <div class="bottom-sheet" role="dialog" aria-modal="true">
+        <h3 class="modal-title" id="modalTitle">إضافة معاملة جديدة</h3>
+        
+        <form id="txForm">
+          <!-- 1. Type -->
+          <div class="form-group-outlined">
+            <span class="form-label-badge">النوع</span>
+            <div class="form-input-container">
+              <select id="txType" class="form-control-native">
+                <option value="expense">مصروف</option>
+                <option value="income">إيراد</option>
+              </select>
+              <span class="select-arrow-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7 10l5 5 5-5z"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- 2. Title -->
+          <div class="form-group-outlined">
+            <span class="form-label-badge">العنوان</span>
+            <div class="form-input-container">
+              <input type="text" id="txTitle" class="form-control-native" placeholder="مثال: فاتورة الكهرباء، مشتريات..." required>
+              <span class="input-icon-left" style="font-weight: 800; font-family: serif; font-size: 18px;">T</span>
+            </div>
+          </div>
+
+          <!-- 3. Amount -->
+          <div class="form-group-outlined">
+            <span class="form-label-badge">المبلغ</span>
+            <div class="form-input-container">
+              <input type="number" step="0.01" min="0.01" id="txAmount" class="form-control-native" placeholder="0.00" required>
+              <span class="input-icon-left">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                  <circle cx="12" cy="12" r="2"></circle>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- 4. Category -->
+          <div class="form-group-outlined">
+            <span class="form-label-badge">الفئة</span>
+            <div class="form-input-container">
+              <select id="txCategory" class="form-control-native"></select>
+              <span class="select-arrow-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7 10l5 5 5-5z"/>
+                </svg>
+              </span>
+            </div>
+            <div class="cat-quick-links">
+              <button type="button" class="add-cat-btn" id="btnOpenCatModalFromForm">⚙️ إدارة وتعديل الفئات</button>
+              <button type="button" class="add-cat-btn" id="btnAddCustomCat">+ إضافة فئة</button>
+            </div>
+          </div>
+
+          <!-- 5. Date -->
+          <div class="form-group-outlined">
+            <span class="form-label-badge">التاريخ</span>
+            <div class="form-input-container">
+              <input type="date" id="txDate" class="form-control-native" required>
+              <span class="input-icon-left">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- 6. Notes -->
+          <div class="form-group-outlined">
+            <span class="form-label-badge">ملاحظات</span>
+            <div class="form-input-container" style="align-items: flex-start; padding-top: 6px;">
+              <textarea id="txNotes" class="form-control-native" rows="2" placeholder="ملاحظات اختيارية..."></textarea>
+              <span class="input-icon-left" style="margin-top: 8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- Bottom Action Buttons matching screenshot -->
+          <div class="modal-actions">
+            <button type="submit" class="btn-pill-submit">
+              <span>+</span>
+              <span id="btnModalSubmitText">إضافة</span>
+            </button>
+            <button type="button" class="btn-pill-cancel" id="btnModalCancel">
+              <span>إلغاء</span>
+              <span>✕</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= TRANSACTION DETAIL / ACTIONS SHEET ================= -->
+    <div class="modal-overlay" id="txDetailOverlay">
+      <div class="bottom-sheet">
+        <h3 class="modal-title" id="detailTitle">تفاصيل المعاملة</h3>
+        
+        <div style="background: #faf9fd; border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1px solid #ebe6f5;">
+          <div class="report-breakdown-row">
+            <span>المبلغ:</span>
+            <span class="amount-display" id="detailAmount">0.00 ج.م</span>
+          </div>
+          <div class="report-breakdown-row">
+            <span>الفئة:</span>
+            <span id="detailCategory" style="font-weight: 700;">أخرى</span>
+          </div>
+          <div class="report-breakdown-row">
+            <span>التاريخ:</span>
+            <span id="detailDate" style="font-weight: 700;">-</span>
+          </div>
+          <div style="margin-top: 8px; font-size: 13.5px; color: #666; border-top: 1px dashed #e0dced; padding-top: 8px;">
+            <span>الملاحظات: </span>
+            <span id="detailNotes" style="color: #222;">-</span>
+          </div>
+        </div>
+
+        <div class="tx-actions-sheet">
+          <button class="btn-action-full btn-action-edit" id="btnDetailEdit">
+            ✏️ تعديل المعاملة
+          </button>
+          <button class="btn-action-full btn-action-delete" id="btnDetailDelete">
+            🗑️ حذف المعاملة
+          </button>
+          <button class="btn-secondary" onclick="closeTxDetailModal()" style="margin-top: 6px;">
+            إغلاق
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= CATEGORY MANAGEMENT MODAL ================= -->
+    <div class="modal-overlay" id="catModalOverlay">
+      <div class="bottom-sheet" role="dialog" aria-modal="true">
+        <h3 class="modal-title">إدارة وتعديل الفئات</h3>
+
+        <!-- Toggle between Expense & Income categories -->
+        <div class="cat-type-toggle">
+          <button type="button" class="cat-type-btn active" id="btnCatTypeExpense" data-type="expense">فئات المصروفات</button>
+          <button type="button" class="cat-type-btn" id="btnCatTypeIncome" data-type="income">فئات الإيرادات</button>
+        </div>
+
+        <!-- Add new category form -->
+        <form id="catAddForm" class="cat-add-row">
+          <input type="text" id="catAddInput" class="cat-add-input" placeholder="اسم فئة جديدة..." required>
+          <button type="submit" class="cat-add-submit">+ إضافة</button>
+        </form>
+
+        <!-- Categories List -->
+        <div class="cat-list" id="catListContainer">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="modal-actions" style="margin-top: 20px;">
+          <button type="button" class="btn-pill-submit" id="btnCloseCatModal">
+            تم وحفظ
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="appToast"></div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/db.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
